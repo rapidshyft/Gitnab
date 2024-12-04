@@ -1,9 +1,9 @@
+import express from "express";
+import { webhookCallback } from "grammy";
 import { bot } from "../src/bot";
 
-const {
-  VERCEL_URL: host,
-  // set your webhook address or use default Vercel deployment url
-  WEBHOOK: webhook = `https://${host}/api/webhook`,
-} = process.env;
+const app = express(); // or whatever you're using
+app.use(express.json()); // parse the JSON request body
 
-void bot.api.setWebhook(webhook);
+// "express" is also used as default if no argument is given.
+app.use(webhookCallback(bot, "express"));
