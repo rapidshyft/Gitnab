@@ -1,7 +1,10 @@
 import { Bot } from "grammy";
 require("dotenv").config();
 
-export const bot = new Bot(process.env.BOT_TOKEN || "");
+const bot_token = process.env.BOT_TOKEN;
+if (!bot_token) throw new Error("BOT_TOKEN is unset");
+
+export const bot = new Bot(bot_token || "");
 
 bot.command("start", (ctx) => ctx.reply("Hello"));
 
