@@ -1,5 +1,0 @@
-{
-  "outputDirectory": ".",
-  "installCommand": "npm install",
-  "buildCommand": "npx ts-node api/webhook.ts"
-}
