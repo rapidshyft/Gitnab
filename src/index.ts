@@ -9,6 +9,7 @@
  */
 
 import { Bot, Context, webhookCallback } from 'grammy';
+import { startCommand } from './commands/start';
 
 export interface Env {
 	// Example binding to KV. Learn more at https://developers.cloudflare.com/workers/runtime-apis/kv/
@@ -33,9 +34,7 @@ export default {
 	async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
 		const bot = new Bot(env.BOT_TOKEN, { botInfo: JSON.parse(env.BOT_INFO) });
 
-		bot.command('start', async (ctx: Context) => {
-			await ctx.reply('Hello, world!');
-		});
+		startCommand(bot);
 
 		return webhookCallback(bot, 'cloudflare-mod')(request);
 	},
