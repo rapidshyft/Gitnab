@@ -1,10 +1,25 @@
 import { Bot } from 'grammy';
+import { Env } from '..';
 
-export const startCommand = (bot: Bot) => {
+export const startCommand = (bot: Bot, env: Env) => {
 	bot.command('start', async (ctx) => {
-		const name = ctx.from?.first_name;
-		await ctx.reply(
-			`Welcome to Gitnab, your personal bot for tracking GitHub repositories and delivering the latest releases right to your Telegram channels! 🚀\n\nHere’s what you can do:\n\nTrack Repositories: Get notified and download new releases from your favorite GitHub repos.\nAuto Upload: Automatically upload release files to your selected Telegram channel.\nCustom Notifications: Receive detailed release notes or just the files — it’s up to you!`
-		);
+		const user_id = ctx.from?.id;
+		const role = 'user';
+
+		try {
+			const existingUser = await env.DB.prepare('SELECT * FROM users WHERE id = ?').bind(user_id).first();
+
+			if (!existingUser) {
+				// If user does not exist, insert into the users table
+				await env.DB.prepare('INSERT INTO users (id, role) VALUES (?, ?)').bind(user_id, role).run();
+				await ctx.reply(`Welcome, ${ctx.from?.first_name}! You've been added.`);
+			} else {
+				// User already exists, send a different message
+				await ctx.reply(`Welcome back, ${ctx.from?.first_name}!`);
+			}
+		} catch (error) {
+			console.error(error);
+			await ctx.reply('Something went wrong while processing your request.');
+		}
 	});
 };
